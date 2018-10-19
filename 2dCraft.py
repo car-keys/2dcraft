@@ -1,9 +1,11 @@
 from dataclasses import dataclass
 import pygame as pg
 import noise
+from pathlib import Path
 #angle between extremes of vision
 viewport_angle = 90
 MAX_RAY_ITERS = 50
+WORLD_FILE = Path('./world.csv')
 block_color_lookup = {'air': (155, 201, 255), 'stone': (165, 165, 165)}
 
 @dataclass
@@ -73,6 +75,7 @@ class Game:
             
         
         pg.display.flip()
+        
 class WorldGenerator:
     terrain = []
     world_size = 100000
@@ -80,26 +83,20 @@ class WorldGenerator:
     roughness = 0.84
     base_dis = 55
     iterations = 1
-    def gen_world():
+    
+    def gen_terrain():
         #not sure how useful this is, its probably not.    
         for i in range(self.iterations):
             self.terrain = [self.base_height]*self.world_size
             gen_terrain(0, self.world_size-1, self.base_dis)
             self.terrain = [round(t) for t in self.terrain]
         self.terrain = blur(self.terrain, 2)
-        with open('world.csv', 'w') as f:
-            wter = csv.writer(f)
-            wter.writerow(self.terrain)
 
-        xs = range(len(self.terrain)*100)
-        ys = np.repeat(self.terrain, 100)
-        plt.plot(xs, ys, 'b')
-        plt.xlim((10000, 22000))
-        plt.ylim((0, 256))
-        plt.show()
-
-        
-        
+    def load_terrain(f):
+        with open('world.csv', 'r') as f:
+            rder = csv.reader(f)
+            reader.read(terrain)
+            
     def blur(arr, iters):
         for i in range(iters):
             for x in range(len(arr)):
